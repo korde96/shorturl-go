@@ -15,11 +15,6 @@ import (
 	kitLog "github.com/go-kit/kit/log"
 )
 
-var (
-	host string = "127.0.0.1"
-	port int    = 3000
-)
-
 func main() {
 
 	config, err := config.LoadConfig()
