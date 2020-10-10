@@ -11,7 +11,7 @@ import (
 	"shorturl-go/svc"
 	"shorturl-go/transport"
 
-	. "github.com/aerospike/aerospike-client-go"
+	as "github.com/aerospike/aerospike-client-go"
 	kitLog "github.com/go-kit/kit/log"
 )
 
@@ -32,7 +32,7 @@ func main() {
 	// defer db.Close()
 	// store := store.NewBadgerStore(db)
 
-	client, err := NewClient(config.ASConfig.Host, config.ASConfig.Port)
+	client, err := as.NewClient(config.ASConfig.Host, config.ASConfig.Port)
 	if err != nil {
 		log.Fatal(err)
 	}

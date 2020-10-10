@@ -52,11 +52,7 @@ func (svc *urlsvc) ShortenURL(url string) (string, error) {
 }
 
 func (svc *urlsvc) GetURL(surl string) (string, error) {
-	if url, err := svc.store.GetSlug(surl); err == nil {
-		return url, nil
-	} else {
-		return "", err
-	}
+	return svc.store.GetSlug(surl)
 }
 
 func retryGen(f func() error, n int) error {
