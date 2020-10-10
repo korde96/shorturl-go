@@ -1,0 +1,12 @@
+{
+    "server": {
+        "host" : "127.0.0.1",
+        "port" : "8080"
+    },
+    "aerospike": {
+        "host" : "127.0.0.1",
+        "port" : "3000",
+        "namespace" : "test",
+        "ttl" : "300"
+    }
+}
