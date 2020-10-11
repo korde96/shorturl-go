@@ -3,7 +3,6 @@ package store
 import (
 	"crypto/md5"
 	"errors"
-	"fmt"
 	"shorturl-go/config"
 
 	as "github.com/aerospike/aerospike-client-go"
@@ -79,7 +78,6 @@ func NewASStore(as *as.Client, cfg config.ASConfig) Store {
 }
 
 func (a *aerospike) PutSlug(k, v string) error {
-	fmt.Printf("Putting %s,%s\n", k, v)
 	key, err := as.NewKey(a.cfg.Namespace, slugSet, k)
 	if err != nil {
 		return ASError
@@ -89,7 +87,6 @@ func (a *aerospike) PutSlug(k, v string) error {
 
 	err = a.as.PutObject(policy, key, &Slug{k, v})
 	if err != nil {
-		fmt.Printf("Could not put %s,%s\n", k, v)
 		return ASError
 	}
 
