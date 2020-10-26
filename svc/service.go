@@ -3,7 +3,6 @@ package svc
 import (
 	"errors"
 	"shorturl-go/internal/store"
-	"shorturl-go/pkg/util"
 
 	"github.com/go-kit/kit/log"
 )
@@ -11,7 +10,7 @@ import (
 var ErrSlugGenFailed = errors.New("Failed to Generate Short URL")
 
 type URLSvc interface {
-	ShortenURL(url string) (string, error)
+	ShortenURL(url string, slugProvider func() (string, error)) (string, error)
 	GetURL(url string) (string, error)
 }
 
@@ -25,7 +24,7 @@ func NewURLSvc(store store.Store, logger log.Logger) URLSvc {
 	return &urlsvc{store, logger}
 }
 
-func (svc *urlsvc) ShortenURL(url string) (string, error) {
+func (svc *urlsvc) ShortenURL(url string, slugProvider func() (string, error)) (string, error) {
 	slug, err := svc.store.GetIfExists(url)
 	if err == nil {
 		svc.logger.Log("msg", "URL already exists in store")
@@ -35,7 +34,7 @@ func (svc *urlsvc) ShortenURL(url string) (string, error) {
 	svc.logger.Log("msg", "Generating Short URL")
 	var surl string
 	if err = retryGen(func() error {
-		if surl, err = util.GenSlug(); err == nil {
+		if surl, err = slugProvider(); err == nil {
 			if storeError := svc.store.PutSlug(surl, url); storeError == nil {
 				return nil
 			} else {

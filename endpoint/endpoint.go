@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"context"
+	"shorturl-go/pkg/util"
 	"shorturl-go/svc"
 
 	"github.com/go-kit/kit/endpoint"
@@ -29,9 +30,21 @@ func MakeShortURLEndpoints(svc svc.URLSvc, logger log.Logger) Endpoints {
 func makeAddURLEndpoint(svc svc.URLSvc) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(AddURLRequest)
-		surl, err := svc.ShortenURL(req.URL)
+
+		surl, err := svc.ShortenURL(req.URL, getSlugProvider(req))
 		return AddURLResponse{surl}, err
 	}
+}
+
+func getSlugProvider(req AddURLRequest) (slugProvider func() (string, error)) {
+	if req.Slug != "" {
+		slugProvider = func() (string, error) {
+			return req.Slug, nil
+		}
+	} else {
+		slugProvider = util.GenSlug
+	}
+	return slugProvider
 }
 
 func makeGetURLEndpoint(svc svc.URLSvc) endpoint.Endpoint {
@@ -43,7 +56,8 @@ func makeGetURLEndpoint(svc svc.URLSvc) endpoint.Endpoint {
 }
 
 type AddURLRequest struct {
-	URL string `json:"url" binding:"required"`
+	Slug string `json:"slug"`
+	URL  string `json:"url" binding:"required"`
 }
 
 type AddURLResponse struct {
